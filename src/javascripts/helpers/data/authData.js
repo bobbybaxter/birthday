@@ -1,5 +1,7 @@
 import firebase from 'firebase/app';
 
+import birthday from '../../components/birthday/birthday';
+
 const authDiv = document.getElementById('auth');
 const birthdayDiv = document.getElementById('birthday');
 const birthdayNavbar = document.getElementById('navbar-button-birthday');
@@ -14,6 +16,7 @@ const checkLoginStatus = () => {
       birthdayNavbar.classList.remove('hide');
       authNavbar.classList.add('hide');
       logoutNavbar.classList.remove('hide');
+      birthday.printBirthday(user.uid);
     } else {
       authDiv.classList.remove('hide');
       birthdayDiv.classList.add('hide');
