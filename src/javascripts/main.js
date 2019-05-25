@@ -8,6 +8,7 @@ import MyNavbar from './components/MyNavbar/MyNavbar';
 import authData from './helpers/data/authData';
 
 import apiKeys from './helpers/apiKeys.json';
+import friends from './components/friends/friends';
 
 
 const init = () => {
@@ -15,6 +16,7 @@ const init = () => {
   MyNavbar.navbarEvents();
   authData.checkLoginStatus();
   auth.printAuth();
+  friends.showFriends();
 };
 
 init();
