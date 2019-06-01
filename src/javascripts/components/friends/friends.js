@@ -17,6 +17,7 @@ const createNewFriend = (e) => {
       document.getElementById('new-friend').classList.add('hide');
       document.getElementById('name').value = '';
       document.getElementById('email').value = '';
+      getFriends(firebase.auth().currentUser.uid); // eslint-disable-line no-use-before-define
     })
     .catch(err => console.error('new friend didnt add', err));
 };
@@ -27,10 +28,22 @@ const newFriendButton = () => {
   document.getElementById('saveNewFriend').addEventListener('click', createNewFriend);
 };
 
-const showFriends = () => {
-  const domString = '<button id="add-friend-button" class="btn btn-dark m-2 shadow">Add Friend</button>';
+const showFriends = (friends) => {
+  let domString = '<button id="add-friend-button" class="btn btn-dark m-2 shadow">Add Friend</button>';
+  friends.forEach((friend) => {
+    domString += `<h3>${friend.name}</h3>`;
+  });
   util.printToDom('friends', domString);
   document.getElementById('add-friend-button').addEventListener('click', newFriendButton);
 };
 
-export default { showFriends };
+const getFriends = (uid) => {
+  friendsData.getFriendsByUid(uid)
+    .then((friends) => {
+      console.error('friends', friends);
+      showFriends(friends);
+    })
+    .catch(err => console.error('no friends', err));
+};
+
+export default { getFriends };
