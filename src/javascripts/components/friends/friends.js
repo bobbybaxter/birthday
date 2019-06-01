@@ -42,14 +42,24 @@ const deleteFriendsEvents = (e) => {
 };
 
 const radioButtonEvent = (e) => {
-  const rsvpId = e.target.closest('td');
+  const rsvpId = e.target.closest('td').id;
   console.error(rsvpId);
   const rsvp = {
     birthdayId: e.target.closest('table').id,
     friendId: e.target.id.split('.')[1],
     statusId: e.target.value,
   };
-  console.error(rsvp);
+  if (rsvpId) {
+    // update
+    rsvpData.editRsvp(rsvpId, rsvp)
+      .then(() => getFriends(firebase.auth().currentUser.uid)) // eslint-disable-line no-use-before-define
+      .catch(err => console.error('no RSVP update', err));
+  } else {
+    // add
+    rsvpData.addRsvp(rsvp)
+      .then(() => getFriends(firebase.auth().currentUser.uid)) // eslint-disable-line no-use-before-define
+      .catch(err => console.error('no new RSVP added', err));
+  }
 };
 
 const addEvents = () => {
