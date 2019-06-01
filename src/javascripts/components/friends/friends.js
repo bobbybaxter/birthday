@@ -3,6 +3,10 @@ import 'firebase/auth';
 
 import util from '../../helpers/util';
 import friendsData from '../../helpers/data/friendsData';
+import birthdayData from '../../helpers/data/birthdayData';
+import rsvpData from '../../helpers/data/rsvpData';
+import SMASH from '../../helpers/smash';
+
 
 const createNewFriend = (e) => {
   e.preventDefault();
@@ -49,7 +53,7 @@ const showFriends = (friends) => {
   let domString = '<div class="col-9">';
   domString += '<h2>Friends</h2>';
   domString += '<button id="add-friend-button" class="btn btn-info">Add Friend</button>';
-  domString += '<table class="table table-striped"';
+  domString += '<table class="table table-striped table-sm"';
   domString += '<thead>';
   domString += '<tr>';
   domString += '<th scope="col">Name</th>';
@@ -64,17 +68,18 @@ const showFriends = (friends) => {
     domString += `<td>${friend.name}</td>`;
     domString += `<td>${friend.email}</td>`;
     domString += `<td id=${friend.rsvpId}>`;
+    console.error(friend.statusId);
     domString += '<div class="custom-control custom-radio custom-control-inline">';
-    domString += '<input type="radio" id="customRadioInline1" name="customRadioInline1" class="custom-control-input">';
-    domString += '<label class="custom-control-label" for="customRadioInline1">Toggle this custom radio</label>';
+    domString += `<input type="radio" id="radio1_${friend.id}" name="radio-buttons_${friend.id}" class="custom-control-input" ${friend.statusId === 'status2' ? 'checked' : ''}>`;
+    domString += `<label class="custom-control-label" for="radio1_${friend.id}">Yes</label>`;
     domString += '</div>';
     domString += '<div class="custom-control custom-radio custom-control-inline">';
-    domString += '<input type="radio" id="customRadioInline2" name="customRadioInline1" class="custom-control-input">';
-    domString += '<label class="custom-control-label" for="customRadioInline2">Or toggle this other custom radio</label>';
+    domString += `<input type="radio" id="radio2_${friend.id}" name="radio-buttons_${friend.id}" class="custom-control-input" ${friend.statusId === 'status3' ? 'checked' : ''}>`;
+    domString += `<label class="custom-control-label" for="radio2_${friend.id}">No</label>`;
     domString += '</div>';
     domString += '<div class="custom-control custom-radio custom-control-inline">';
-    domString += '<input type="radio" id="customRadioInline3" name="customRadioInline1" class="custom-control-input">';
-    domString += '<label class="custom-control-label" for="customRadioInline3">Or toggle this other custom radio</label>';
+    domString += `<input type="radio" id="radio3_${friend.id}" name="radio-buttons_${friend.id}" class="custom-control-input" ${friend.statusId === 'status1' ? 'checked' : ''}>`;
+    domString += `<label class="custom-control-label" for="radio3_${friend.id}">Unknown</label>`;
     domString += '</div>';
     domString += '</td>';
     domString += `<th scope="col"><button id=${friend.id} class="btn btn-danger delete-friend">X</button></th>`;
@@ -90,7 +95,13 @@ const showFriends = (friends) => {
 const getFriends = (uid) => {
   friendsData.getFriendsByUid(uid)
     .then((friends) => {
-      showFriends(friends);
+      birthdayData.getBirthdayByUid(uid).then((bday) => {
+        rsvpData.getRsvpsByBirthdayId(bday.id).then((rsvps) => {
+          const finalFriends = SMASH.friendRsvps(friends, rsvps);
+          console.error('finalFriends', finalFriends);
+          showFriends(finalFriends);
+        });
+      });
     })
     .catch(err => console.error('no friends', err));
 };
